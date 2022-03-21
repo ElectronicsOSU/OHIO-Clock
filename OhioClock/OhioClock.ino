@@ -11,6 +11,7 @@
 #define NUM_LEDS 395
 #define TOP_SIZE 35
 #define DATA_PIN 7
+#define PHOTO_MODE_PIN 8
 
 #define SEGHEIGHT 11
 #define SEGWIDTH 12
@@ -46,13 +47,14 @@ void setup() {
   lcd.setCursor(0, 0);
   lcd.print(F("OHI/O Clock"));
   lcd.setCursor(0, 1);
-  lcd.print(F("Max Fojtik 2020"));
+  lcd.print(F("Edward Lui 2022"));
   LEDS.addLeds<WS2812,DATA_PIN,GRB>(leds,NUM_LEDS);
   LEDS.setBrightness(255);
   pinMode(JOYBUTTON, INPUT_PULLUP);
   pinMode(JOYX, INPUT);
   pinMode(JOYY, INPUT);
   pinMode(4, INPUT_PULLUP);
+  pinMode(PHOTO_MODE_PIN, INPUT);
   Serial.begin(9600);
   if(!rtc.begin()) 
   {

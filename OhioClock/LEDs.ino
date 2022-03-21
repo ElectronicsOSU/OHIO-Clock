@@ -157,11 +157,13 @@ void writeColon(boolean on, CRGB c)
 }
 void disOhio()
 {
-  writeRawSegment(0,   0b000111111, CRGB(0,255,0));
-  writeRawSegment(82,  0b001011011, CRGB(0,255,0));
-  writeRawSegment(196, 0b000000011, CRGB(0,255,0));
-  writeRawSegment(278, 0b000111111, CRGB(0,255,0));
+  FastLED.setBrightness(255);
+  writeRawSegment(0,   0b000111111, CRGB(255,0,0));
+  writeRawSegment(82,  0b001011011, CRGB(255,0,0));
+  writeRawSegment(196, 0b000000011, CRGB(255,0,0));
+  writeRawSegment(278, 0b000111111, CRGB(255,0,0));
   writeColon(false, CRGB(0,0,0));
+  setTop(CHSV(0,255,255));
   FastLED.show();
 }
 byte secondsToHour(unsigned long time)
@@ -198,8 +200,15 @@ void updateLEDs()
   unsigned long time = millis();
   if(!running)
   {
-    //disOhio();
-    waiting();
+//    Serial.println(digitalRead(PHOTO_MODE_PIN));
+    if(digitalRead(PHOTO_MODE_PIN)) 
+    {
+      disOhio();
+    }
+    else
+    {
+      waiting();
+    }
     writeFast = true;
   }
   else
@@ -251,23 +260,30 @@ void updateLEDs()
       {
         byte spot = (byte)((int)(millis()/3000.0*255)%255);
 //        Serial.println(spot);
-        if(spot<150)
+        if(digitalRead(PHOTO_MODE_PIN)) 
         {
-          FastLED.setBrightness(255);
+          disOhio();
         }
-        else if(spot<160)
+        else 
         {
-          FastLED.setBrightness(255-(spot-160));
+          if(spot<150)
+          {
+            FastLED.setBrightness(255);
+          }
+          else if(spot<160)
+          {
+            FastLED.setBrightness(255-(spot-160));
+          }
+          else
+          {
+            FastLED.setBrightness(0);
+          }
+          setTop();
+          writeHours(secondsToHour(0), CHSV(hue, 255,255));
+          writeMinutes(secondsToMinutes(0), CHSV(hue,  255,255));
+          writeColon(false, CHSV(hue, 255,255));
+          writeFast = true; 
         }
-        else
-        {
-          FastLED.setBrightness(0);
-        }
-        setTop();
-        writeHours(secondsToHour(0), CHSV(hue, 255,255));
-        writeMinutes(secondsToMinutes(0), CHSV(hue,  255,255));
-        writeColon(false, CHSV(hue, 255,255));
-        writeFast = true;
       }
     }
   }
